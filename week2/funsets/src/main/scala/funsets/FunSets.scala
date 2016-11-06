@@ -68,18 +68,9 @@ object FunSets {
    * Returns whether there exists a bounded integer within `s`
    * that satisfies `p`.
    */
-   def exists(s: Set, p: Int => Boolean): Boolean = {
-     // this is ridiculously dumb, but the assignment insists that I implement
-     // this operation in terms of forall instead of factoring out their common
-     // elements as I initially did. For my preferred implementation, see
-     // https://github.com/coriolinus/coursera-scala/blob/ffbcb5f7d02e942e621491edc3f3085aa560b692/week2/funsets/src/main/scala/funsets/FunSets.scala#L54-L74
-     def iter(a: Int): Boolean = {
-       if (a > bound) false
-       else if (contains(s, a)) forall(singletonSet(a), p) || iter(a + 1) 
-       else iter(a + 1)
-     }
-     iter(-bound)
-   }
+   def exists(s: Set, p: Int => Boolean): Boolean =
+     // set theory formulation of `any` in terms of `all`
+     ! forall(s, (t: Int) => !p(t))
 
 
   /**
