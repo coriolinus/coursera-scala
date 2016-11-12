@@ -23,3 +23,6 @@ project/plugins/project/
 
 # mac-specific
 .DS_Store
+
+# Ensure we don't accidentally add one of the compressed assignment files
+*.zip
