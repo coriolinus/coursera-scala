@@ -109,7 +109,7 @@ abstract class TweetSet {
   def foreach(f: Tweet => Unit): Unit
 }
 
-class Empty extends TweetSet {
+case class Empty() extends TweetSet {
     def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = acc
 
     def union(that: TweetSet): TweetSet = that
@@ -131,17 +131,17 @@ class Empty extends TweetSet {
   def foreach(f: Tweet => Unit): Unit = ()
 }
 
-class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
+case class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
 
     def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
-      // new accumulator after considering this element
-      val nacc = if (p(elem)) acc.incl(elem) else acc
-      // new accumulator after considering all lower subelements
-      val lacc = left.filterAcc(p, nacc)
-      right.filterAcc(p, lacc)
+      val acc_with_current = if (p(this.elem)) acc.incl(this.elem) else acc
+      this.right.filterAcc(p, this.left.filterAcc(p, acc_with_current))
     }
 
-    def union(that: TweetSet): TweetSet = that.union(left).union(right).incl(elem)
+    def union(that: TweetSet): TweetSet = that match {
+      case Empty() => this
+      case NonEmpty(that_elem, that_left, that_right) => this.incl(that_elem).union(that_left).union(that_right)
+    }
 
     def mostRetweeted: Tweet = {
       val left_max = try {
