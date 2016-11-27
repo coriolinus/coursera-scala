@@ -212,7 +212,6 @@ object Anagrams {
    *  Note: There is only one anagram of an empty sentence.
    */
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = {
-    // handle empty case
     if (sentence.length == 0) List(List()) else {
       sentences_from(sentenceOccurrences(sentence))
     }
@@ -233,7 +232,7 @@ object Anagrams {
   }
 
   def sentences_from(occurrences: Occurrences): List[Sentence] = {
-    if (occurrences.length == 0) List[Sentence]() else
+    if (occurrences.length == 0) List(List()) else
     for {
       (first, rest) <- word_in(occurrences)
       subsentence <- sentences_from(rest)
